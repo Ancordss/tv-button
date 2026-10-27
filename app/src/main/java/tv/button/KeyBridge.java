@@ -28,7 +28,7 @@ public class KeyBridge extends AccessibilityService {
     private static final android.content.ComponentName TARGET_ACTIVITY =
             new android.content.ComponentName(TARGET, "com.stremio.tv.MainActivity");
     private static final long DOUBLE_PRESS_MS = 600;
-    private static final long CAPTURE_DELAY_MS = 2500;   // apps that load a splash need this long before the frame is real
+    private static final long CAPTURE_DELAY_MS = 3500;   // apps that load a splash need this long before the frame is real
     private static final long CAPTURE_THROTTLE_MS = 3000; // accessibility screenshots are rate limited
     private static final long CAPTURE_REFRESH_MS = 30000; // a card's picture is refreshed at most this often
     private long lastHomeUp = 0;

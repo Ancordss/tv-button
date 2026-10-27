@@ -10,9 +10,11 @@ screen, OK to go back to it, hold OK to close it.
 Written in the same visual language as GlassOS: glass cards, the app's accent colour, the blurred screen
 behind. 18 KB, no dependencies, nothing sent anywhere.
 
-| Switcher | Setup |
+![The switcher: the app you are in, with the pile behind its left edge](docs/screenshots/stack.jpg)
+
+| First run | The `!` circle, focused |
 |---|---|
-| ![Switcher](docs/screenshots/stack.png) | ![Setup](docs/screenshots/setup.png) |
+| ![Setup](docs/screenshots/setup.jpg) | ![Help](docs/screenshots/switcher.jpg) |
 
 ## What it does
 
@@ -98,7 +100,7 @@ Text follows the TV's language: the app ships English and Spanish, and the syste
   window, so a key filter is the only way to see it while another app is in front. Everything except that
   button and Home is passed straight through.
 - **Pictures, not icons.** On every window change the service takes a screenshot 2.5 s later (throttled to
-  one per 3 s, refreshed at most every 30 s per app) and keeps a 640 × 360 JPEG (q85, ~68 KB) in the app's
+  one per 3 s, refreshed at most every 30 s per app) and keeps a 1280 × 720 JPEG (q90, ~200 KB) in the app's
   own cache. That is why a card shows where you left the app.
 - **Blank frames are dropped.** Netflix, Disney+ and YouTube hand out `FLAG_SECURE` black frames. A frame
   whose luma spread is under 0.06, or whose mean luma is under 0.02, is thrown away, and the card falls

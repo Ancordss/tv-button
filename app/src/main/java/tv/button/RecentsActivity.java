@@ -104,13 +104,14 @@ public class RecentsActivity extends Activity {
         help.setContentDescription(getString(R.string.switcher_help_button));
         help.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         help.setTextColor(0xE6FFFFFF);
-        help.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        help.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
         help.setGravity(Gravity.CENTER);
-        GradientDrawable circle = new GradientDrawable();
-        circle.setShape(GradientDrawable.OVAL);
-        circle.setColor(0x26FFFFFF);
-        circle.setStroke(dp(1), 0x4DFFFFFF);
-        help.setBackground(circle);
+        help.setBackground(helpCircle(false));
+        help.setOnFocusChangeListener((v, focused) -> {
+            v.setBackground(helpCircle(focused));
+            v.animate().scaleX(focused ? 1.12f : 1f).scaleY(focused ? 1.12f : 1f)
+                    .setDuration(140).start();
+        });
         help.setFocusable(true);
         help.setClickable(true);
         help.setOnClickListener(v -> startActivity(
@@ -119,9 +120,9 @@ public class RecentsActivity extends Activity {
             help.setNextFocusUpId(switcher.getId());
             switcher.setNextFocusDownId(help.getId());
         }
-        FrameLayout.LayoutParams helpLp = new FrameLayout.LayoutParams(dp(38), dp(38),
+        FrameLayout.LayoutParams helpLp = new FrameLayout.LayoutParams(dp(32), dp(32),
                 Gravity.BOTTOM | Gravity.START);
-        helpLp.setMargins(dp(26), 0, 0, dp(16));
+        helpLp.setMargins(dp(26), 0, 0, dp(14));
         root.addView(help, helpLp);
 
         setContentView(root);
@@ -326,6 +327,15 @@ public class RecentsActivity extends Activity {
     private boolean isLaunchable(String pkg) {
         PackageManager pm = getPackageManager();
         return pm.getLeanbackLaunchIntentForPackage(pkg) != null || pm.getLaunchIntentForPackage(pkg) != null;
+    }
+
+    /** The "!" disc: dim until it has focus, then a bright ring, so the selection is visible. */
+    private GradientDrawable helpCircle(boolean focused) {
+        GradientDrawable d = new GradientDrawable();
+        d.setShape(GradientDrawable.OVAL);
+        d.setColor(focused ? 0x99FFFFFF : 0x26FFFFFF);
+        d.setStroke(dp(2), focused ? 0xFFFFFFFF : 0x4DFFFFFF);
+        return d;
     }
 
     private int dp(int v) {

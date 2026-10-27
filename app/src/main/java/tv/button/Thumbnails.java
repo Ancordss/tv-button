@@ -13,13 +13,14 @@ import java.io.FileOutputStream;
  * up). The switcher then shows what the app actually looked like, which is what makes the card read
  * as "go back to where I was".
  *
- * Files live in the app's own cache dir, are never uploaded, and are capped at 640x360 JPEG q85: about
- * 25-40 KB each, so twelve cards cost well under half a megabyte.
+ * Files live in the app's own cache dir, are never uploaded, and are capped at 1280x720 JPEG q90: about
+ * 150-250 KB each, so a full switcher costs a couple of megabytes, pruned to the apps it shows.
  */
 final class Thumbnails {
 
-    private static final int W = 640;
-    private static final int H = 360;
+    // The card is 1380x776 px on a 1080p TV: 640x360 was visibly soft once upscaled, 1280x720 is not.
+    private static final int W = 1280;
+    private static final int H = 720;
 
     private Thumbnails() {
     }
@@ -40,7 +41,7 @@ final class Thumbnails {
         try {
             Bitmap small = Bitmap.createScaledBitmap(screen, W, H, true);
             try (FileOutputStream fos = new FileOutputStream(out)) {
-                small.compress(Bitmap.CompressFormat.JPEG, 85, fos);
+                small.compress(Bitmap.CompressFormat.JPEG, 90, fos);
             }
             if (small != screen) {
                 small.recycle();

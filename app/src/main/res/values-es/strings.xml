@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">TV Button</string>
+
+    <!-- Primera configuración -->
+    <string name="setup_welcome_title">TV Button</string>
+    <string name="setup_welcome_body">Dos cosas para tu tele: el botón que sobra en el mando abre una app, y pulsar Home dos veces abre el selector de apps recientes.\n\nNo se envía nada a ningún lado. La app solo lee el mando y guarda una imagen por app en la tele.</string>
+
+    <string name="setup_gestures_title">Gestos</string>
+    <string name="setup_gestures_body">Home dos veces → el selector de recientes.\n\nOK abre la app enfocada.\nMantener OK la cierra.\nEl círculo con “!” en el selector trae esta ayuda de vuelta.</string>
+
+    <string name="setup_access_title">Dos permisos</string>
+    <string name="setup_access_body">Accesibilidad (filtro de teclas) es como se capturan el botón que sobra y el doble Home. Acceso de uso es como el selector sabe qué apps usaste al final.\n\nLos dos se dan en la tele. Nada sale del dispositivo.</string>
+
+    <string name="setup_done_title">Listo</string>
+    <string name="setup_done_body">Tus apps van a ir apareciendo aquí conforme las abras; cada tarjeta muestra la pantalla donde la dejaste.\n\nAlgunas apps (Netflix, Disney+, YouTube) no permiten ser capturadas, así que su tarjeta muestra el icono.</string>
+
+    <string name="action_continue">Continuar</string>
+    <string name="action_back">Atrás</string>
+    <string name="action_done">Listo</string>
+    <string name="action_close">Cerrar</string>
+    <string name="action_accessibility">Abrir accesibilidad</string>
+    <string name="action_usage">Abrir acceso de uso</string>
+    <string name="action_preview">Abrir el selector</string>
+
+    <string name="help_title">Cómo funciona TV Button</string>
+
+    <!-- Selector -->
+    <string name="switcher_help_button">Ayuda</string>
+    <string name="switcher_empty">Sin apps recientes</string>
+    <string name="switcher_closed">Cerrada: %1$s</string>
+</resources>

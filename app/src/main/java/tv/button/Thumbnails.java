@@ -1,0 +1,91 @@
+package tv.button;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
+/**
+ * Last-screen thumbnails, one small PNG per package, captured by KeyBridge whenever an app comes to
+ * the foreground (an accessibility service may call takeScreenshot, and only for the screen that is
+ * up). The switcher then shows what the app actually looked like, which is what makes the card read
+ * as "go back to where I was".
+ *
+ * Files live in the app's own cache dir, are never uploaded, and are capped at 640x360 JPEG q85: about
+ * 25-40 KB each, so twelve cards cost well under half a megabyte.
+ */
+final class Thumbnails {
+
+    private static final int W = 640;
+    private static final int H = 360;
+
+    private Thumbnails() {
+    }
+
+    private static File file(Context ctx, String pkg) {
+        File dir = new File(ctx.getCacheDir(), "thumbs");
+        if (!dir.exists() && !dir.mkdirs()) {
+            return null;
+        }
+        return new File(dir, pkg + ".jpg");
+    }
+
+    static void save(Context ctx, String pkg, Bitmap screen) {
+        File out = file(ctx, pkg);
+        if (out == null) {
+            return;
+        }
+        try {
+            Bitmap small = Bitmap.createScaledBitmap(screen, W, H, true);
+            try (FileOutputStream fos = new FileOutputStream(out)) {
+                small.compress(Bitmap.CompressFormat.JPEG, 85, fos);
+            }
+            if (small != screen) {
+                small.recycle();
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    static Bitmap load(Context ctx, String pkg) {
+        File f = file(ctx, pkg);
+        if (f == null || !f.exists()) {
+            return null;
+        }
+        try {
+            return BitmapFactory.decodeFile(f.getAbsolutePath());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** Keeps the cache to the apps the switcher is showing, plus a week; drops near-blank leftovers. */
+    static void prune(Context ctx, java.util.Set<String> keep) {
+        File dir = new File(ctx.getCacheDir(), "thumbs");
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return;
+        }
+        long cutoff = System.currentTimeMillis() - 7L * 24 * 3600 * 1000;
+        for (File f : files) {
+            String name = f.getName();
+            String pkg = name.replaceAll("\\.(png|jpg)$", "");
+            boolean stale = f.lastModified() < cutoff || f.length() < 3072;
+            boolean legacy = !name.endsWith(".jpg"); // PNG files from before the JPEG change
+            if (stale || legacy || !keep.contains(pkg)) {
+                //noinspection ResultOfMethodCallIgnored
+                f.delete();
+            }
+        }
+    }
+
+    static void forget(Context ctx, String pkg) {
+        File f = file(ctx, pkg);
+        if (f != null) {
+            //noinspection ResultOfMethodCallIgnored
+            f.delete();
+        }
+    }
+}

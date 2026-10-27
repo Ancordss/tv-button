@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">TV Button</string>
+
+    <!-- First-run setup -->
+    <string name="setup_welcome_title">TV Button</string>
+    <string name="setup_welcome_body">Two things added to your TV: the spare remote button opens an app, and pressing Home twice opens a task switcher.\n\nNothing is sent anywhere. The app only reads the remote and keeps one picture per app on the TV.</string>
+
+    <string name="setup_gestures_title">Gestures</string>
+    <string name="setup_gestures_body">Home twice → the app switcher.\n\nOK opens the focused app.\nHold OK closes it.\nThe circle with “!” in the switcher brings this help back.</string>
+
+    <string name="setup_access_title">Two permissions</string>
+    <string name="setup_access_body">Accessibility (key filter) is how the spare button and the double Home are caught. Usage access is how the switcher knows which apps you used last.\n\nBoth are granted on the TV. Nothing leaves the device.</string>
+
+    <string name="setup_done_title">Ready</string>
+    <string name="setup_done_body">Your apps will appear here as you open them; each card shows the screen you left.\n\nSome apps (Netflix, Disney+, YouTube) do not allow being captured, so their card shows the app icon instead.</string>
+
+    <string name="action_continue">Continue</string>
+    <string name="action_back">Back</string>
+    <string name="action_done">Done</string>
+    <string name="action_close">Close</string>
+    <string name="action_accessibility">Open accessibility</string>
+    <string name="action_usage">Open usage access</string>
+    <string name="action_preview">Open the switcher</string>
+
+    <string name="help_title">How TV Button works</string>
+
+    <!-- Switcher -->
+    <string name="switcher_help_button">Help</string>
+    <string name="switcher_empty">No recent apps</string>
+    <string name="switcher_closed">Closed: %1$s</string>
+</resources>

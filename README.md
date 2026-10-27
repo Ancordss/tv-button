@@ -1,5 +1,7 @@
 # TV Button — for GlassOS
 
+[![build](https://github.com/Ancordss/tv-button/actions/workflows/build.yml/badge.svg)](https://github.com/Ancordss/tv-button/actions/workflows/build.yml)
+
 A tiny companion app for [GlassOS](https://github.com/AbhishekKaisar/glassos-tv) on Android TV and
 Google TV. It adds the two things a clean launcher leaves behind: it puts the remote's spare button to
 work, and it brings back a **task switcher** — Home twice, a stack of cards showing each app's own last

@@ -16,7 +16,8 @@ behind. 18 KB, no dependencies, nothing sent anywhere.
 
 | Gesture | Result |
 |---|---|
-| **Home twice** (within 600 ms) | The app switcher: a stack of cards, each the last screen of an app |
+| **Home twice** (within 600 ms) | The app switcher: the app you are in, in front, with the apps you used before stacked behind its left edge |
+| **Left / Right** | Back through older apps, forward again to the one you were in |
 | **OK** | Opens the focused app |
 | **Hold OK** | Closes it — `killBackgroundProcesses`, plus it leaves the stack |
 | **Back** | Leaves the switcher |
@@ -80,7 +81,7 @@ Everything is one constant, then rebuild and reinstall:
 |---|---|
 | App opened by the spare button | `TARGET` + `TARGET_ACTIVITY` in `app/src/main/java/tv/button/KeyBridge.java` |
 | Double-Home window | `DOUBLE_PRESS_MS` in `KeyBridge.java` (600 ms) |
-| Card size, overlap, radius | `CARD_W`, `CARD_H`, `OVERLAP`, `RADIUS` in `SwitcherView.java` |
+| Card size, how far each card of the pile sticks out, radius | `CARD_W`, `CARD_H`, `STEP`, `RADIUS` in `SwitcherView.java` |
 | How long a card keeps its picture | `WINDOW_MS` (24 h) and `MAX_CARDS` (12) in `RecentsActivity.java` |
 | The accent behind the setup panel | `ACCENT` in `SetupActivity.java` |
 | Text | `app/src/main/res/values/strings.xml` (English) and `values-es/` (Spanish) |
@@ -100,8 +101,10 @@ Text follows the TV's language: the app ships English and Spanish, and the syste
 - **Blank frames are dropped.** Netflix, Disney+ and YouTube hand out `FLAG_SECURE` black frames. A frame
   whose luma spread is under 0.06, or whose mean luma is under 0.02, is thrown away, and the card falls
   back to the app icon on its own dominant colour (the mean of the opaque, saturated pixels of its icon).
-- **The stack is one View.** `SwitcherView` paints every card in list order and the focused one last, so the
-  open card covers its overlapping neighbours; moving animates the row on a 240 ms decelerating curve.
+- **The stack is one View.** `SwitcherView` paints the pile from the oldest card to the newest and the
+  focused one last, so it covers the cards behind it. The focused card sits at 56% of the screen width with
+  every older card 92 dp further left, each dimmer and slightly smaller by depth; moving animates that
+  offset on a 240 ms decelerating curve. Only the front card is named — in a pile, labels collide.
 - **Nothing accumulates.** `Thumbnails.prune()` runs whenever the switcher opens: it keeps only the apps
   being shown, drops anything older than 7 days, and drops pre-JPEG leftovers. Closing an app deletes its
   picture. Bitmaps are recycled when the screen goes away, and the backdrop is kept at half resolution.

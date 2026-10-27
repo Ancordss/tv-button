@@ -104,12 +104,12 @@ public class RecentsActivity extends Activity {
         help.setContentDescription(getString(R.string.switcher_help_button));
         help.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
         help.setTextColor(0xE6FFFFFF);
-        help.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        help.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         help.setGravity(Gravity.CENTER);
         GradientDrawable circle = new GradientDrawable();
         circle.setShape(GradientDrawable.OVAL);
         circle.setColor(0x26FFFFFF);
-        circle.setStroke(dp(2), 0x4DFFFFFF);
+        circle.setStroke(dp(1), 0x4DFFFFFF);
         help.setBackground(circle);
         help.setFocusable(true);
         help.setClickable(true);
@@ -119,9 +119,9 @@ public class RecentsActivity extends Activity {
             help.setNextFocusUpId(switcher.getId());
             switcher.setNextFocusDownId(help.getId());
         }
-        FrameLayout.LayoutParams helpLp = new FrameLayout.LayoutParams(dp(56), dp(56),
-                Gravity.BOTTOM | Gravity.END);
-        helpLp.setMargins(0, 0, dp(36), dp(30));
+        FrameLayout.LayoutParams helpLp = new FrameLayout.LayoutParams(dp(38), dp(38),
+                Gravity.BOTTOM | Gravity.START);
+        helpLp.setMargins(dp(26), 0, 0, dp(16));
         root.addView(help, helpLp);
 
         setContentView(root);

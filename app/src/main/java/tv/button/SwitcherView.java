@@ -59,7 +59,8 @@ class SwitcherView extends View {
 
     private static final int CARD_W = 690;
     private static final int CARD_H = 388;
-    private static final int OVERLAP = 120;
+    /** How far each card of the pile sticks out to the left of the one in front of it. */
+    private static final int STEP = 92;
     private static final int RADIUS = 28;
     private static final long ANIM_MS = 240;
     private static final long LONG_PRESS_MS = 450;
@@ -69,7 +70,8 @@ class SwitcherView extends View {
     private final Listener listener;
 
     private int focus = 0;
-    private float offset = 0;
+    /** Animated copy of [focus]: the whole pile slides when the selection changes. */
+    private float shift = 0;
     private ValueAnimator anim;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -112,7 +114,7 @@ class SwitcherView extends View {
                 if (!cards.isEmpty()) {
                     listener.onFocus(cards.get(focus));
                 }
-                offset = target();
+                shift = focus;
                 invalidate();
                 return;
             }
@@ -122,14 +124,24 @@ class SwitcherView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int ow, int oh) {
         super.onSizeChanged(w, h, ow, oh);
-        offset = target();
+        shift = focus;
     }
 
-    /** Where the row has to sit for the focused card to be centred. */
-    private float target() {
-        float cardW = dp(CARD_W);
-        float step = cardW - dp(OVERLAP);
-        return focus * step + cardW / 2f - getWidth() / 2f;
+    /**
+     * Left edge of card [i]. The focused card sits just right of centre (so the pile has room on the
+     * left) and every older card is one [STEP] further left, behind it.
+     */
+    private float leftOf(int i, float cardW, float step) {
+        return getWidth() * 0.56f - cardW / 2f + (shift - i) * step;
+    }
+
+    /** Cards further back are dimmer and slightly smaller, so the pile reads as depth. */
+    private static float alphaFor(int depth) {
+        return Math.max(0.10f, 0.92f - 0.15f * depth);
+    }
+
+    private static float scaleFor(int depth) {
+        return Math.max(0.86f, 1f - 0.02f * depth);
     }
 
     private void move(int delta) {
@@ -142,11 +154,11 @@ class SwitcherView extends View {
         if (anim != null) {
             anim.cancel();
         }
-        anim = ValueAnimator.ofFloat(offset, target());
+        anim = ValueAnimator.ofFloat(shift, focus);
         anim.setDuration(ANIM_MS);
         anim.setInterpolator(new DecelerateInterpolator(1.6f));
         anim.addUpdateListener(a -> {
-            offset = (float) a.getAnimatedValue();
+            shift = (float) a.getAnimatedValue();
             invalidate();
         });
         anim.start();
@@ -154,11 +166,12 @@ class SwitcherView extends View {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+        // The pile sits to the left: Left walks back through older apps, Right goes forward.
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
             move(1);
             return true;
         }
-        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
             move(-1);
             return true;
         }
@@ -206,20 +219,23 @@ class SwitcherView extends View {
     protected void onDraw(Canvas c) {
         float cardW = dp(CARD_W);
         float cardH = dp(CARD_H);
-        float step = cardW - dp(OVERLAP);
+        float step = dp(STEP);
 
-        for (int i = 0; i < cards.size(); i++) {
+        for (int i = cards.size() - 1; i >= 0; i--) {
             if (i == focus) {
-                continue; // painted last, so it covers the neighbours it overlaps
+                continue; // painted last, on top of the pile
             }
-            drawCard(c, cards.get(i), i * step - offset, cardW, cardH, 0.55f, 0.96f);
+            int depth = Math.abs(i - focus);
+            drawCard(c, cards.get(i), leftOf(i, cardW, step), cardW, cardH,
+                    alphaFor(depth), scaleFor(depth), false); // only the front card is named
         }
         if (focus < cards.size()) {
-            drawCard(c, cards.get(focus), focus * step - offset, cardW, cardH, 1f, 1f);
+            drawCard(c, cards.get(focus), leftOf(focus, cardW, step), cardW, cardH, 1f, 1f, true);
         }
     }
 
-    private void drawCard(Canvas c, Card card, float x, float cardW, float cardH, float alpha, float scale) {
+    private void drawCard(Canvas c, Card card, float x, float cardW, float cardH,
+                          float alpha, float scale, boolean labelled) {
         float radius = dp(RADIUS);
         c.save();
         c.translate(x + cardW / 2f, (getHeight() - cardH) / 2f + cardH / 2f);
@@ -269,6 +285,11 @@ class SwitcherView extends View {
                 0x1AFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
         c.drawRect(0, 0, cardW, cardH * 0.45f, gradient);
         c.restore(); // clip
+
+        if (!labelled) {
+            c.restore(); // the transform opened at the top of this method
+            return;
+        }
 
         // Badge + name, top-left.
         float badge = dp(34);

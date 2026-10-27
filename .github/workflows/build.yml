@@ -18,11 +18,14 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
-
+      # The runner image already ships the Android SDK; setup-android@v3 breaks on newer
+      # images because the legacy "tools" package no longer exists in the repository.
       - name: Build
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
         run: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
           ./gradlew assembleRelease --console=plain
 
       - uses: actions/upload-artifact@v4

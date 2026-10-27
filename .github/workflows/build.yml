@@ -1,5 +1,9 @@
 name: build
 
+# Uploading the APK to a release needs write access; the default token is read-only.
+permissions:
+  contents: write
+
 on:
   push:
     branches: [main]
